@@ -1,9 +1,12 @@
 ## Verified environment
 - MacOS: 10.15.7
 - Chrome: 96.0.4664.93 (Official Build) (x86_64)
+- Selenium: 4.1.0
+- Python: 3.9.1
 
 ## Pre-requisites
 - Google Chrome
+- Python3
 - (Optional) [Selenium IDE](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd) for debugging
 
 ## Install
