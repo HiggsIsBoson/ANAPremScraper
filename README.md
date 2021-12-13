@@ -15,7 +15,7 @@ source venv_ANAPremQuery/bin/activate
 Install `Selenium` and `chrome driver`:
 <pre>
 pip install selenium
-pip install chromedriver-binary==96.*   # specify a consistent version as your chome browser
+pip install chromedriver-binary==96.*   # specify the version of your chome browser  
 </pre>
 
 ## Next time you log in
@@ -39,6 +39,8 @@ done
 ## Print out the options
 python ANAPremQuery.py -h
 </pre>
+The output files are generated in `output/` created in the directory.
+For the example of batch query see also `ANAPremQuery.sh` which can be executed with `. ANAPremQuery.sh`.
 
 ## When you finish
 Type
