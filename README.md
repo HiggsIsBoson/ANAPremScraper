@@ -26,7 +26,7 @@ pip install chromedriver-binary==96.*   # specify the version of your chome brow
 source venv_ANAPremQuery/bin/activate
 </pre>
 
-## Run
+## Run web queries
 <pre>
 # Query on Haneda->Naha on 15 Feb 2022
 python ANAPremQuery.py -y 2022 -m 2 -d 15 -O haneda -D naha
@@ -42,8 +42,8 @@ done
 ## Print out the options
 python ANAPremQuery.py -h
 </pre>
-The output files are generated in `output/` created in the directory.
-For the example of batch query see also `ANAPremQuery.sh` which can be executed with `. ANAPremQuery.sh`.
+The output files are generated in `output/` created at the location the script is run.  
+An example of batch queries can be found in [`ANAPremQuery.sh`](https://github.com/HiggsIsBoson/ANAPremScraper/blob/master/ANAPremQuery.sh).
 
 ## When you finish
 Type
