@@ -28,10 +28,10 @@ source venv_ANAPremQuery/bin/activate
 
 ## Run web queries
 <pre>
-# Query on Haneda->Naha on 15 Feb 2022
+# Query Haneda->Naha on 15 Feb 2022
 python ANAPremQuery.py -y 2022 -m 2 -d 15 -O haneda -D naha
 
-## Query on Haneda->Naha for the whole month of Feb 2022
+## Query Haneda->Naha for the whole month of Feb 2022
 python ANAPremQuery.py -y 2022 -m 2 -O haneda -D naha
 
 ## Parallelise (appending `&`)
@@ -43,7 +43,9 @@ done
 python ANAPremQuery.py -h
 </pre>
 The output files are generated in `output/` created at the location the script is run.  
-An example of batch queries can be found in [`ANAPremQuery.sh`](https://github.com/HiggsIsBoson/ANAPremScraper/blob/master/ANAPremQuery.sh).
+An example of batch queries can be found in [`ANAPremQuery.sh`](https://github.com/HiggsIsBoson/ANAPremScraper/blob/master/ANAPremQuery.sh).  
+
+**NOTE:** The parser is in progress. To be added at some point.  
 
 ## When you finish
 Type
