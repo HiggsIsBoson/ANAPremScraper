@@ -34,9 +34,9 @@ python ANAPremQuery.py -y 2022 -m 2 -d 15 -O haneda -D naha
 ## Query on Haneda->Naha for the whole month of Feb 2022
 python ANAPremQuery.py -y 2022 -m 2 -O haneda -D naha
 
-## Parallelise
+## Parallelise (appending `&`)
 for month in 1 2 3; do
-    python ANAPremQuery.py -y 2022 -m 2 -O haneda -D naha & 
+    python ANAPremQuery.py -y 2022 -m $month -O haneda -D naha & 
 done
 
 ## Print out the options
@@ -50,4 +50,4 @@ Type
 <pre>
 deactivate
 </pre>
-to escape the virtual env.
+to exit the virtual env.
