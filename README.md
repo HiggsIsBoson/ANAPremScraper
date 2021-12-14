@@ -45,7 +45,7 @@ python ANAPremQuery.py -h
 The output files are generated in `output/` created at the location the script is run.  
 An example of batch queries can be found in [`ANAPremQuery.sh`](https://github.com/HiggsIsBoson/ANAPremScraper/blob/master/ANAPremQuery.sh).  
 
-**NOTE:** The parser is in progress. To be added at some point.  
+**NOTE:** The output parser is work-in-progress. To be added at some point.  
 
 ## When you finish
 Type
