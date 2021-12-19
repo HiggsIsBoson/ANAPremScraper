@@ -36,7 +36,7 @@ class ANAPremQuery():
     self.driver.quit()
 
   ##########
-  def doQuery(self, origin, dest, year, month, day=-1):
+  def doQuery(self, origin, dest, year, month, day=-1, outDir='output/'):
 
     #
     # day>0  -> Just query the day
@@ -126,7 +126,7 @@ class ANAPremQuery():
         #print("actualDate: ",actualDate, " current_month: ", current_month)
         
         if current_month != zstr(month): break
-        outFile = 'output/rawquery_'+origin+'_'+dest+'_'+actualDate+'.html'
+        outFile = outDir+'/rawquery_'+origin+'_'+dest+'_'+actualDate+'.html'
         with open(outFile, 'w') as f:  f.write(self.driver.page_source)
         print('Generated '+outFile)
 
@@ -147,16 +147,18 @@ class ANAPremQuery():
 parser = OptionParser(usage="usage : python ANAPremQuery.py -y [year] -m [month] (-d [day]) -O [origin] -D [destination]")
 parser.add_option("-y", dest="year", type="int", default=2022, help="Year inquired")
 parser.add_option("-m", dest="month", type="int", default=2, help="Month inquired")
-parser.add_option("-d", dest="day", type="int", default=-1, help="(optional) Date inquired. Go over the whole month if <=0.")
+parser.add_option("-d", dest="day", type="int", default=-1, help="(Optional) Date inquired. Go over the whole month if <=0.")
 parser.add_option("-O", dest="origin", type="string", default="haneda", help="Origin (all small capitals)")
 parser.add_option("-D", dest="destination", type="string", default="naha", help="Destination (all small captals)")
 parser.add_option("-b", dest="doHeadless", action="store_true", default=False, help="Run on batch mode (i.e. no browser window showing up)")
+parser.add_option("-s", dest="outDir", type="string", default="output", help="(Optional) Path to the output directory. Default='output/'")
+
 
 (options, args) = parser.parse_args()
 
 ###########
 browser = ANAPremQuery()
 browser.setup_method(options.doHeadless)
-browser.doQuery(options.origin, options.destination, options.year, options.month, options.day) 
+browser.doQuery(options.origin, options.destination, options.year, options.month, options.day, options.outDir) 
 browser.teardown_method()
 

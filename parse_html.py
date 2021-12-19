@@ -1,4 +1,6 @@
 import os, glob
+import json
+from optparse import OptionParser
 
 ##################################
 class ticket :
@@ -20,8 +22,9 @@ class ticket :
 class flight :
     ID=0
     date=0
-    time=''
-    tickets=[]
+    time_dep=''
+    time_arr=''
+    tickets={}
 
     def __init__ (self) :
         self.clear()
@@ -29,9 +32,16 @@ class flight :
     def clear (self) :
         self.ID=0
         self.date=0
-        self.time=''
-        self.tickets=[]
+        self.time_dep=''
+        self.time_arr=''
+        self.tickets={}
     
+##################################
+def dumper(obj): #custom JSON dumper
+    try:
+        return obj.toJSON()
+    except:
+        return obj.__dict__
 ##################################
 def getAttr(line,key) :
     tokens =  line.split('>')
@@ -55,19 +65,23 @@ def getFlightID(line) :
     return getAttr(line, 'anaWings')
 
 ########################################
-def parse_day(inFileName, dict_flights) :
+def parse_day(inFileName) :
 
     f = open(inFileName,'r')
     lines = f.readlines()
 
+    flights={}
     for line in lines:
         #    time=line.split('>')[3].split('<')[0]
         #    print(time)
 
         this_flight = flight()    
-        this_flight.flightID = getFlightID(line)
+        this_flight.ID = getFlightID(line)
         this_flight.date = inFileName.split('_')[-2]
-        this_flight.time = getAttr(line, 'availabilityResultFlightTime')
+
+        time = getAttr(line, 'availabilityResultFlightTime')
+        this_flight.time_dep = time.split(' ')[0].replace(' ','')
+        this_flight.time_arr = time.split(' ')[2].replace(' ','')
 
         blocks = line.replace('<td class=\"showResult\"','#<td class=\"showResult\"').split('#')
         for ib in range(1,len(blocks)) :        
@@ -88,22 +102,38 @@ def parse_day(inFileName, dict_flights) :
             nAvail = getAttr(blocks[ib], 'hasSeatCount')
             t.nAvail = 0 if nAvail==None else nAvail
             
-            this_flight.tickets.append(t)
+            this_flight.tickets[t.ticket_type] = t
 
 
-        print('----------------------')
-        print(this_flight.flightID, this_flight.date, this_flight.time)
-        for t in this_flight.tickets :
-            print(t.ticket_type, t.mileage, t.price, t.nAvail)
+#        print('----------------------')
+#        print(this_flight.ID, this_flight.date, this_flight.time_dep, this_flight.time_arr)
+#        print(this_flight.tickets)
 
-        dict_flights.append(this_flight)
+        flights[str(this_flight.date)+'_'+this_flight.ID] = this_flight
+
+    return flights
+
 
 ######################################
-dict_flights=[]
+parser = OptionParser(usage="usage : python parse_html.py -O [origin] -D [destination]")
+parser.add_option("-O", dest="origin", type="string", default="haneda", help="Origin (all small capitals)")
+parser.add_option("-D", dest="destination", type="string", default="naha", help="Destination (all small captals)")
 
-for f in sorted(glob.glob(os.path.join('output/*_event.html'))) : 
-    print(f)
-#    parse_day('output/rawquery_haneda_naha_20220228_event.html',dict_flights)
-    parse_day(f, dict_flights)
+(options, args) = parser.parse_args()
 
-print(dict_flights)
+######################################
+
+ls_key='output/*'+options.origin+'_'+options.destination+'*_event.html'
+print("parse_html  INFO  Going over: ", ls_key)
+
+dict_day={}
+for f in sorted(glob.glob(os.path.join(ls_key))) : 
+    date = f.split('_')[-2]
+    dict_day[date] = parse_day(f)
+
+jsonString = json.dumps(dict_day, default=dumper, indent=2)
+
+
+outFile = 'output/parsed_'+options.origin+'_'+options.destination+'.json'
+print('parse_html  INFO  Generated '+outFile)
+with open(outFile, 'w') as f:  f.write(jsonString)
