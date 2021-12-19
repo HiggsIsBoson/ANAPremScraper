@@ -42,6 +42,8 @@ class ANAPremQuery():
     # day>0  -> Just query the day
     # day<=0 -> Dump all days of the month
     #
+
+    dumpWholeMonth = bool(day<=0)
     
     # A bunch of sanity checks
     if year > 2030 :
@@ -60,16 +62,18 @@ class ANAPremQuery():
 
     # Figure the first day to fetch (one can only search for the future)
     day_1stQuery=None
-    if day>=1: 
+    if dumpWholeMonth : 
+        print('Try to query for the month: %i-%i' % (year,month))
+        day_1stQuery = max(today+datetime.timedelta(days=1),datetime.date(year,month,1))
+        print("Note only start the query from the nearest future date (if applicable): ", day_1stQuery)
+
+    else:
         day_1stQuery = datetime.date(year, month, day) 
         print("Try a query on: ", day_1stQuery)
         if day_1stQuery < today:
             print("Can't query the past. Exit.")
             os.sys.exit(1)
-    else:
-        print('Try to query for the month: %i-%i' % (year,month))
-        day_1stQuery = max(today+datetime.timedelta(days=1),datetime.date(year,month,1))
-        print("Note only start the query from the nearest future date (if applicable): ", day_1stQuery)
+
     
     # Start the browsing
     self.driver.get("https://www.ana.co.jp/ja/jp/book-plan/fare/domestic/premiumclass/")
@@ -111,30 +115,32 @@ class ANAPremQuery():
 
     # Start the inital query
     self.driver.find_element(By.NAME, "submitButtonName_Second").click()
+    
+    # Save & go over the rest of the month in case of a monthly query
+    current_month = zstr(month)
+    while current_month == zstr(month) :
+    
+        dateString = self.driver.find_element(By.CSS_SELECTOR, ".flightSummaryDate").text
+        current_month = str(dateString.split('年')[1].split('月')[0])
+        actualDate = dateString.replace('年','').replace('月','').replace('日','').split('(')[0]
+        #print("actualDate: ",actualDate, " current_month: ", current_month)
+        
+        if current_month != zstr(month): break
+        outFile = 'output/rawquery_'+origin+'_'+dest+'_'+actualDate+'.html'
+        with open(outFile, 'w') as f:  f.write(self.driver.page_source)
+        print('Generated '+outFile)
 
-    # Save
-    outFile = 'output/rawquery_'+origin+'_'+dest+'_'+str(year)+zstr(month)+zstr(day_1stQuery.day)+'.html'
-    os.makedirs('output/', exist_ok=True)
-    with open(outFile, 'w') as f:  f.write(self.driver.page_source)
-    print('Generated '+outFile)
+        # Move on to the next day in case of a monthly query
+        if dumpWholeMonth : 
+            self.driver.find_element(By.CSS_SELECTOR, "#nextDayButton > .jsRollOver").click()
+            element = self.driver.find_element(By.CSS_SELECTOR, "#nextDayButton > .jsRollOver")
+            actions = ActionChains(self.driver)
+            actions.move_to_element(element).perform()
 
-    if day<=0 :
-        # Save and go over the rest of the month
-        for d in range(1,nDaysOfTheMonth+1):
+        # Finish here if not
+        else : break
 
-            # Move on to the next day
-            if d > 1:
-                self.driver.find_element(By.CSS_SELECTOR, "#nextDayButton > .jsRollOver").click()
-                element = self.driver.find_element(By.CSS_SELECTOR, "#nextDayButton > .jsRollOver")
-                actions = ActionChains(self.driver)
-                actions.move_to_element(element).perform()
 
-                outFile = 'output/rawquery_'+origin+'_'+dest+'_'+str(year)+zstr(month)+zstr(d)+'.html'
-                with open(outFile, 'w') as f:  f.write(self.driver.page_source)
-                print('Generated '+outFile)
-            else : 
-                # The buttom doesn't work at the first push(?)
-                self.driver.find_element(By.CSS_SELECTOR, "#nextDayButton > .jsRollOver").click()
 
 
 ######################################

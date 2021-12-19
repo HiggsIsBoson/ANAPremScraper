@@ -4,7 +4,7 @@
 - Selenium: 4.1.0
 - Python: 3.9.1
 
-## Pre-requisites
+## Prerequisites
 - Google Chrome
 - Python3
 - (Optional) [Selenium IDE](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd) for debugging
